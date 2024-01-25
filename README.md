@@ -27,33 +27,24 @@ CountMoment is a web application designed to inspire and motivate individuals in
 1. Clone the repository:
    ```bash
    git clone https://github.com/yourusername/CountMoment.git
-Navigate to the project directory:
-bash
-Copy code
-cd CountMoment
-Install dependencies:
-bash
-Copy code
-npm install
-Running the Application
-Start the MongoDB server.
-Run the application:
-bash
-Copy code
-npm run dev
-Open http://localhost:3000 in your browser.
-Usage
-Register an account to start tracking your habits and goals.
-Customize your trackers and set personal targets.
-Check daily for motivational content and progress updates.
-Contributing
-Contributions to CountMoment are always welcome, whether it's feature suggestions, bug reports, or pull requests. Please read our CONTRIBUTING.md for guidelines on how to contribute.
+## Usage
+- Register an account to start tracking your habits and goals.
+- Customize your trackers and set personal targets.
+- Check daily for motivational content and progress updates.
 
-License
-This project is licensed under the MIT License.
+## Contributing
+Contributions to CountMoment are always welcome, whether it's feature suggestions, bug reports, or pull requests. Please read our [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines on how to contribute.
 
-Acknowledgments
-Contributors and supporters who have helped in the development of CountMoment.
-Contact
-For any queries or suggestions, feel free to contact us at your-email@example.com.
+## License
+This project is licensed under the [MIT License](LICENSE).
+
+## Acknowledgments
+- Contributors and supporters who have helped in the development of CountMoment.
+
+## Contact
+For any queries or suggestions, feel free to contact us at [your-email@example.com](mailto:ziks29@gmail.com).
+
+---
+
+Thank you for using or contributing to CountMoment!
 
