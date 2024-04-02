@@ -1,5 +1,4 @@
 "use client";
-
 import { useEffect } from "react";
 import {
   useMiniApp,
@@ -8,7 +7,6 @@ import {
   usePopup,
   useMainButton,
   useSettingsButton,
-  useClosingBehavior,
   useInitData,
 } from "@tma.js/sdk-react";
 import {
@@ -17,32 +15,47 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-import { useRouter, usePathname } from "next/navigation";
-import { useStore } from "@/store/storage";
+import { useRouter } from "next/navigation";
+import { useUserStore } from "@/store/userStorage";
+import { getUserByTelegramId } from "@/lib/actions";
+import { useMoodStore } from "@/store/moodStorage";
+import { useTaskStore } from "@/store/taskStorage";
+import { useChangeLocale } from "@/locales/client";
 
 export function MiniApp() {
   const miniApp = useMiniApp();
-  // const { loadFromCloud } = useStore();
   const viewport = useViewport();
   const initData = useInitData();
-  const { storedInitData, setStoredInitData } = useStore();
   const themeParams = useThemeParams();
   const popup = usePopup();
   const mainButton = useMainButton();
   const settingsButton = useSettingsButton();
-  const closingBehavior = useClosingBehavior();
   const router = useRouter();
-  const path = usePathname();
+  const { telegramId, setTelegramId, setUserId, locale } = useUserStore();
+  const { loadMoods } = useMoodStore();
+  const { loadTasks } = useTaskStore();
+
+  const changeLocale = useChangeLocale();
+
+  settingsButton.show();
+  settingsButton.on("click", () => {
+    console.log("Go to settings");
+    router.push("/settings");
+  });
 
   useEffect(() => {
-    // closingBehavior.enableConfirmation();
-    setStoredInitData(initData);
+    // console.log("Init data: ", initData);
     viewport.expand();
-    settingsButton.show();
-    settingsButton.on("click", () => {
-      console.log("Go to settings");
-      router.push("/settings");
-    });
+    setTelegramId(initData?.user?.id as number);
+    async function loadUserData() {
+      const userData = await getUserByTelegramId(telegramId);
+      if (userData) {
+        setUserId(userData.id);
+        loadMoods(userData.moods);
+        loadTasks(userData.tasks);
+      }
+    }
+    loadUserData();
 
     mainButton.setText("Main button");
     mainButton.enable();
@@ -73,11 +86,37 @@ export function MiniApp() {
     settingsButton,
     mainButton,
     router,
-    initData?.user?.id,
     popup,
-    setStoredInitData,
     initData,
+    setTelegramId,
+    telegramId,
+    setUserId,
+    loadMoods,
+    loadTasks,
   ]);
+
+  useEffect(() => {
+    const supportedLanguages = ["en", "ru"]; // Extend this array as you add support for more languages
+    const defaultLocale = "en"; // Default to English
+    const systemLocale = initData?.user?.languageCode;
+
+    //Check firstly if locale is initialized, if yes than just proceed with it
+    if (locale) {
+      console.log("Locale is already set: ", locale);
+      return;
+    }
+    //If not, check if system locale is supported
+    if (systemLocale && supportedLanguages.includes(systemLocale)) {
+      console.log("System locale is supported: ", systemLocale);
+      changeLocale(systemLocale as "en" | "ru"); // Typescript type assertion
+    } else {
+      console.log(
+        "System locale is not supported, defaulting to: ",
+        defaultLocale
+      );
+      changeLocale(defaultLocale);
+    }
+  }, [initData, locale, changeLocale]);
 
   return (
     <div className="px-2">
@@ -90,7 +129,8 @@ export function MiniApp() {
               <p>Viewport expanded</p>
               <div className="flex flex-col break-all ">
                 <h1>Init Data: </h1>
-                <p>{JSON.stringify(storedInitData, null, 2)}</p>
+                <p>{JSON.stringify(initData, null, 2)}</p>
+                <h1>User Params: </h1>
               </div>
             </div>
           </AccordionContent>

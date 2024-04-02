@@ -1,21 +1,14 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useStore } from "@/store/storage";
+import { BasicComponent } from "@/components/BasicComponent";
 import { useInitData } from "@tma.js/sdk-react";
-import { Separator } from "./ui/separator";
+import { useScopedI18n } from "@/locales/client";
 
 export function MainInfo() {
   const initData = useInitData();
-  const { moodCounter, componentsListWithOrder, addToComponentsListWithOrder } =
-    useStore(); // Assuming tasks is an array or similar structure
   const [greeting, setGreeting] = useState("");
   const [userName, setUserName] = useState("User"); // Replace with actual user name
-
-  useEffect(() => {
-    console.log(componentsListWithOrder);
-    if (componentsListWithOrder.MainInfo === undefined)
-      addToComponentsListWithOrder("MainInfo", 1);
-  }, [addToComponentsListWithOrder, componentsListWithOrder.MainInfo]);
+  const t = useScopedI18n("mainInfo");
 
   useEffect(() => {
     let username;
@@ -26,14 +19,10 @@ export function MainInfo() {
     }
 
     // Arrays of greetings for each time of day
-    const morningGreetings = [
-      "Have a Great Morning",
-      "Rise and Shine",
-      "Good Morning",
-    ];
-    const afternoonGreetings = ["Good Afternoon", "Sunny Day"];
-    const eveningGreetings = ["Quiet Eve", "Good Evening", "Peaceful Evening"];
-    const nightGreetings = ["Rest Well", "Sweet Dreams"];
+    const morningGreetings = [t("morning.1"), t("morning.2"), t("morning.3")];
+    const afternoonGreetings = [t("afternoon.1"), t("afternoon.2")];
+    const eveningGreetings = [t("evening.1"), t("evening.2"), t("evening.3")];
+    const nightGreetings = [t("night.1"), t("night.2")];
 
     const hour = new Date().getHours();
 
@@ -88,28 +77,25 @@ export function MainInfo() {
 
   return (
     <>
-      <div
+      <BasicComponent
+        name="MI"
         className="dark:bg-slate-700/40 bg-slate-200 text-[--tg-theme-text-color] w-full p-6  rounded-lg shadow-xl"
-        style={{
-          order: componentsListWithOrder.MainInfo,
-          display: componentsListWithOrder.MainInfo === 9999 ? "none" : "",
-        }}
       >
         <h1 className="text-xl md:text-2xl">
           {greeting}, {userName}.
         </h1>
         <p className="mt-2">
-          <span className="font-bold">{daysLeft} d.</span> and{" "}
+          <span className="font-bold">{daysLeft + t("days")}</span> {t("and")}
           {hoursLeft === 0 ? (
-            "less than an hour"
+            t("lessThanAnHour")
           ) : (
-            <span className="font-bold">{hoursLeft} h.</span>
+            <span className="font-bold">{hoursLeft + t("hours")}</span>
           )}{" "}
-          left in {currentDate.getFullYear()}.
+          {t("leftIn") + currentDate.getFullYear()}.
         </p>
         <p className="mt-2">
-          You have currently <span className="font-bold">{moodCounter}</span>{" "}
-          tasks.
+          {t("tasks", { count: <strong>0</strong> })}
+          {/* Replace with actual task count */}
         </p>
         <div className="relative w-full h-4 bg-[--tg-theme-text-color] rounded-lg overflow-hidden mt-2">
           <div
@@ -119,9 +105,9 @@ export function MainInfo() {
         </div>
 
         <p className="mt-2 text-sm text-gray-400">
-          Year Progress: {yearProgress}%
+          {t("yearProgress", { progress: yearProgress })}
         </p>
-      </div>
+      </BasicComponent>
       {/* <Separator componentOrder={componentsListWithOrder.MainInfo} /> */}
     </>
   );

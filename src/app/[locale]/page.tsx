@@ -3,8 +3,8 @@ import { AddNew } from "@/components/AddNew";
 import { EmotionTracker } from "@/components/EmotionTracker";
 import { MainInfo } from "@/components/MainInfo";
 import { Header } from "@/components/Header";
-import { Footer } from "@/components/Footer";
 import { SendM } from "@/components/SendM";
+import { SliderComponent } from "@/components/SliderComponent";
 
 export const metadata: Metadata = {
   title: "CountMoment",
@@ -20,8 +20,8 @@ export default function Home() {
         <EmotionTracker />
         <AddNew />
         <SendM />
+        {/* <SliderComponent /> */}
       </div>
-      {/* <Footer /> */}
     </>
   );
 }

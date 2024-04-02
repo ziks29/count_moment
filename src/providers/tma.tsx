@@ -4,8 +4,9 @@ import {
   DisplayGate,
   type SDKInitOptions,
 } from "@tma.js/sdk-react";
-import { useStore } from "@/store/storage";
+import { useUserStore } from "@/store/userStorage";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 
 interface SDKProviderErrorProps {
   error: unknown;
@@ -29,7 +30,11 @@ function SDKProviderLoading() {
 }
 
 function SDKInitialState() {
-  return <div>SDK is initializing.</div>;
+  return (
+    <div className="flex items-center justify-center h-screen w-screen bg-[--tg-theme-background-color">
+      <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-slate-100"></div>
+    </div>
+  );
 }
 
 /**
@@ -46,42 +51,46 @@ export function TMAProvider({
     async: true,
     complete: true,
   };
-  const [loading, setLoading] = useState(true);
-  const { loadFromCloud } = useStore();
+  // Combined loading state
+  const [isLoading, setIsLoading] = useState(true);
+  const { loadFromCloud, locale } = useUserStore();
+  const router = useRouter();
 
   useEffect(() => {
     const initAsyncOperations = async () => {
       try {
         await loadFromCloud();
-        // Additional initialization logic can go here
+        // Add any additional asynchronous initialization logic here
+
+        // Locale setting logic, only proceed if `locale` is not null and hasn't been set this session
+        if (!sessionStorage.getItem("localeSet") && locale) {
+          sessionStorage.setItem("localeSet", "true");
+          await router.push(`/${locale}`);
+        }
       } catch (error) {
         console.error("Initialization error:", error);
+        // Handle initialization errors appropriately
       } finally {
-        setLoading(false); // Ensure loading is false after operations complete
+        setIsLoading(false);
       }
     };
 
     initAsyncOperations();
-  }, [loadFromCloud]);
+  }, [loadFromCloud, locale, router]);
 
-  if (loading) {
-    // Show loading UI
+  if (isLoading) {
+    return <SDKInitialState />;
+  } else {
     return (
-      <div className="flex items-center justify-center h-screen w-screen bg-[--tg-theme-background-color">
-        <div className="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-slate-100"></div>
-      </div>
+      <SDKProvider options={options}>
+        <DisplayGate
+          error={SDKProviderError}
+          loading={SDKProviderLoading}
+          initial={SDKInitialState}
+        >
+          {children}
+        </DisplayGate>
+      </SDKProvider>
     );
   }
-
-  return (
-    <SDKProvider options={options}>
-      <DisplayGate
-        error={SDKProviderError}
-        loading={SDKProviderLoading}
-        initial={SDKInitialState}
-      >
-        {children}
-      </DisplayGate>
-    </SDKProvider>
-  );
 }

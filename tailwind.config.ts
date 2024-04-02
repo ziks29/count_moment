@@ -16,6 +16,9 @@ const config = {
       padding: "2rem",
     },
     extend: {
+      transitionProperty: {
+        height: "height",
+      },
       fontFamily: {
         sans: ["var(--font-sans)", ...fontFamily.sans],
       },
@@ -76,11 +79,26 @@ const config = {
             backgroundPosition: "100% 50%",
           },
         },
+        "opacity-in-out": {
+          "0%": {
+            opacity: "0",
+            transform: "scale(0.9)",
+          },
+          "5%": {
+            opacity: "0",
+            transform: "scale(0.9)",
+          },
+          "100%": {
+            opacity: "1",
+            transform: "scale(1)",
+          },
+        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
         "accordion-up": "accordion-up 0.2s ease-out",
         "background-animate": "background-animate 3s ease infinite",
+        "opacity-in-out": "opacity-in-out 1.2s ease forwards",
       },
     },
   },

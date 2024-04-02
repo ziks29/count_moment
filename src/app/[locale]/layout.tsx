@@ -6,6 +6,7 @@ import { cn } from "@/lib/utils";
 // import { Footer } from "@/components/Footer";
 import { TMAProvider } from "@/providers/tma";
 import { MiniApp } from "@/components/MiniApp";
+import { I18nProviderClient } from "@/locales/client";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -19,12 +20,14 @@ export const fontSans = FontSans({
 });
 
 export default function RootLayout({
+  params: { locale },
   children,
 }: {
   readonly children: React.ReactNode;
+  readonly params: { readonly locale: string };
 }) {
   return (
-    <html lang="en">
+    <html lang="ru">
       <body
         className={cn(
           "min-h-screen font-sans antialiased bg-[--tg-theme-background-color] text-[--tg-theme-text-color] flex flex-col",
@@ -32,10 +35,12 @@ export default function RootLayout({
         )}
       >
         <TMAProvider>
-          {/* <Header /> */}
-          {children}
-          {/* <Footer /> */}
-          <MiniApp />
+          <I18nProviderClient locale={locale}>
+            {/* <Header /> */}
+            {children}
+            {/* <Footer /> */}
+            <MiniApp />
+          </I18nProviderClient>
         </TMAProvider>
       </body>
     </html>
